@@ -1,0 +1,71 @@
+Cathode:
+  volume: 7.66
+  height: 0.54
+  y_position: 7.74
+  number: 1
+  spacing: 0
+  profile: "rectangular"
+  solid: True
+
+Anode:
+  volume: 6.10
+  height: 0.43
+  y_position: 22.54
+  number: 1
+  spacing: 0
+  profile: "rectangular"
+  solid: True
+
+Field ring:
+  volume: 2.39
+  height: 0.78
+  y_position: 8.54
+  number: 14
+  spacing: 1.00
+  profile: "rectangular"
+  solid: True
+
+Large half nipple:
+  volume: 115.12
+  height: 6.02
+  y_position: 11.46
+  number: 1
+  spacing: 0
+  profile: "circular"
+  solid: False
+
+Small half nipple:
+  volume: 103.93
+  height: 4.13
+  y_position: 3.00
+  number: 1
+  spacing: 0
+  profile: "circular"
+  solid: False
+
+Ring holders:
+  volume: 49.86
+  height: 18.00
+  y_position: 7.54
+  number: 1
+  spacing: 0
+  profile: "rectangular"
+  solid: True
+
+Drift tube:
+  volume: 891.52
+  height: 25.54
+  y_position: 0.00
+  number: 1
+  spacing: 0
+  profile: "rectangular"
+  solid: False
+
+Recirculation heater tube:
+  volume: 0.00
+  height: 25.54
+  y_position: 0.00
+  number: 1
+  spacing: 0
+  profile: "rectangular"
+  solid: False
