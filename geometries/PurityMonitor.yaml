@@ -1,3 +1,12 @@
+Bottom tubing:
+  volume: 86.46
+  height: 1.00
+  y_position: -1000
+  number: 1
+  spacing: 0
+  profile: "rectangular"
+  solid: False
+
 Cathode:
   volume: 7.66
   height: 0.54
@@ -44,10 +53,10 @@ Small half nipple:
   solid: False
 
 Ring holders:
-  volume: 49.86
+  volume: 16.62
   height: 18.00
   y_position: 7.54
-  number: 1
+  number: 3
   spacing: 0
   profile: "rectangular"
   solid: True
