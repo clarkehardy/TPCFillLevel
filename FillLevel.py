@@ -1,6 +1,7 @@
 import yaml
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.colors import to_rgba
 
 
 def rectangular_profile(properties):
@@ -72,7 +73,7 @@ def circular_segment_area(y,diameter):
     return diameter**2*np.arccos((diameter - 2*y)/diameter)/4 - (diameter/2 - y)*np.sqrt(y*(diameter - y))
 
 
-class TPCFillLevel:
+class FillLevel:
 
     def __init__(self,detector_yaml):
         '''
@@ -96,20 +97,26 @@ class TPCFillLevel:
             volume_funcs.append(circular_profile(self.geometry[component]))
 
         def mass_filled(y):
+            return_num = False
             if np.shape(y) == ():
+                return_num = True
                 y = np.array([y])
 
             volume = np.zeros_like(y)
             for i in range(len(y)):
                 volume[i] = np.sum([func(y[i]) for func in volume_funcs])
 
+            if return_num:
+                volume = volume[0]
+
             return volume*self.lxe_density
         
         self.mass_filled = mass_filled
 
-
         def fill_level(mass):
+            return_num = False
             if np.shape(mass) == ():
+                return_num = True
                 mass = np.array([mass])
 
             heights = []
@@ -124,6 +131,9 @@ class TPCFillLevel:
 
             # before the level reaches the bottom of the detector, the fill level is 0
             levels[levels < 0] = 0
+
+            if return_num:
+                levels = levels[0]
 
             return levels
         
@@ -154,8 +164,9 @@ class TPCFillLevel:
                 y_lower = self.geometry[component]['y_position']+i*self.geometry[component]['spacing']
                 y_upper = self.geometry[component]['y_position']+i*self.geometry[component]['spacing']\
                           + self.geometry[component]['height']
-                plt.fill_between(self.mass_filled([y_lower,y_upper]),y_lower,y_upper,
-                                 color=colors[j],alpha=0.2,label=component if i == 0 else None)
+                mass_range = [self.mass_filled(y_lower),self.mass_filled(y_upper)]
+                plt.fill_between(mass_range,y_lower,y_upper,edgecolor=colors[j],\
+                                 facecolor=to_rgba(colors[j],alpha=0.1),label=component if i == 0 else None)
                 
         ax.legend(ncol=3,fontsize=10)
 
@@ -186,8 +197,9 @@ class TPCFillLevel:
                 y_lower = self.geometry[component]['y_position']+i*self.geometry[component]['spacing']
                 y_upper = self.geometry[component]['y_position']+i*self.geometry[component]['spacing']\
                           + self.geometry[component]['height']
-                plt.fill_betweenx(self.mass_filled([y_lower,y_upper]),y_lower,y_upper,
-                                  color=colors[j],alpha=0.2,label=component if i == 0 else None)
+                mass_range = [self.mass_filled(y_lower),self.mass_filled(y_upper)]
+                plt.fill_betweenx(mass_range,y_lower,y_upper,edgecolor=colors[j],\
+                                  facecolor=to_rgba(colors[j],alpha=0.1),label=component if i == 0 else None)
                 
         ax.legend(ncol=3,fontsize=10)
 
@@ -215,7 +227,6 @@ class TPCFillLevel:
         ax.set_ylabel('Height [cm]')
         ax.set_title('Detector geometry')
         ax.set_ylim([0,np.amax(y_vals)])
-        ax.grid(which='both')
         lims = ax.get_xlim()
 
         colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
@@ -227,7 +238,8 @@ class TPCFillLevel:
                 y_lower = self.geometry[component]['y_position']+i*self.geometry[component]['spacing']
                 y_upper = self.geometry[component]['y_position']+i*self.geometry[component]['spacing']\
                           + self.geometry[component]['height']
-                plt.fill_between(lims,y_lower,y_upper, color=colors[j],alpha=0.2,label=component if i == 0 else None)
+                plt.fill_between(lims,y_lower,y_upper,edgecolor=colors[j],facecolor=to_rgba(colors[j],alpha=0.1),\
+                                 label=component if i == 0 else None)
 
         ax.legend(ncol=3,fontsize=10)
 
