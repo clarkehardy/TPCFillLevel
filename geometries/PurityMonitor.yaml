@@ -62,16 +62,25 @@ Ring holders:
   solid: True
 
 Drift tube:
-  volume: 891.52
-  height: 25.54
-  y_position: 0.00
+  volume: 812.73
+  height: 23.40
+  y_position: 1.07
   number: 1
   spacing: 0
   profile: "rectangular"
   solid: False
 
+Main flanges:
+  volume: 39.39
+  height: 1.07
+  y_position: 0.00
+  number: 2
+  spacing: 24.47
+  profile: "rectangular"
+  solid: False
+
 Recirculation heater tube:
-  volume: 0.00
+  volume: 29.82
   height: 25.54
   y_position: 0.00
   number: 1
