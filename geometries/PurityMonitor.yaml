@@ -79,7 +79,7 @@ Main flanges:
   profile: "rectangular"
   solid: False
 
-Recirculation heater tube:
+Recirc heater tube:
   volume: 29.82
   height: 25.54
   y_position: 0.00
