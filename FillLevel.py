@@ -82,7 +82,9 @@ class FillLevel:
         with open(detector_yaml,'r') as infile:
             self.geometry = yaml.safe_load(infile)
 
-        self.lxe_density = 2.95 # g/cm^3
+        # largest uncertainty (apart from approximations in geometry) is in the density
+        # provide a lower, median, and upper value to get error bars if desired
+        self.lxe_density = [2.89,2.95,2.97] # lower, median, upper in g/cm^3
         self.build_fill_funcs()
     
 
@@ -96,12 +98,14 @@ class FillLevel:
             volume_funcs.append(rectangular_profile(self.geometry[component]))
             volume_funcs.append(circular_profile(self.geometry[component]))
 
-        def mass_filled(y):
+        def mass_filled(y,return_errors=False):
+            # if a single value is passed, return a single value
             return_num = False
             if np.shape(y) == ():
                 return_num = True
                 y = np.array([y])
 
+            # integrate up to the given height to get the volume
             volume = np.zeros_like(y)
             for i in range(len(y)):
                 volume[i] = np.sum([func(y[i]) for func in volume_funcs])
@@ -109,53 +113,73 @@ class FillLevel:
             if return_num:
                 volume = volume[0]
 
-            return volume*self.lxe_density
+            # return either the median value or the lower, median, and upper values
+            if return_errors:
+                return volume*self.lxe_density[0],volume*self.lxe_density[1],volume*self.lxe_density[2]
+            else:
+                return volume*self.lxe_density[1]
         
         self.mass_filled = mass_filled
 
-        def fill_level(mass):
+        def fill_level(mass,return_errors=False):
+            # if a single value is passed, return a single value
             return_num = False
             if np.shape(mass) == ():
                 return_num = True
                 mass = np.array([mass])
 
+            # get the maximum height of the detector
             heights = []
             for component in self.geometry:
                 comp = self.geometry[component]
                 heights.append(comp['y_position']+comp['height']+(comp['number']-1)+comp['spacing'])
 
+            # create an array of heights to interpolate the mass filled
             fill_pts = np.linspace(0,max(heights),100000)
-            mass_pts = self.mass_filled(fill_pts)
+            mass_pts = self.mass_filled(fill_pts,return_errors)
 
+            if return_errors:
+                lower_mass_pts,mass_pts,upper_mass_pts = mass_pts
+                lower_levels = np.interp(mass,lower_mass_pts,fill_pts)
+                upper_levels = np.interp(mass,upper_mass_pts,fill_pts)
+                lower_levels[lower_levels < 0] = 0
+                upper_levels[upper_levels < 0] = 0
+
+            # interpolate the mass filled to get the fill level
             levels = np.interp(mass,mass_pts,fill_pts)
-
-            # before the level reaches the bottom of the detector, the fill level is 0
             levels[levels < 0] = 0
 
             if return_num:
                 levels = levels[0]
 
-            return levels
+            # return either the median value or the lower, median, and upper values
+            if return_errors:
+                return lower_levels,levels,upper_levels
+            else:
+                return levels
         
         self.fill_level = fill_level
 
 
-    def plot_fill_level(self,masses):
+    def plot_fill_level(self,masses,plot_errors=False):
         '''
         Plot the fill level in the detector as a function of the mass filled.
         '''
 
-        fill_levels = self.fill_level(masses)
+        fill_levels = self.fill_level(masses,return_errors=True)
+
+        colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
         fig,ax = plt.subplots()
-        ax.plot(masses,fill_levels,label='Fill level')
+        ax.plot(masses,fill_levels[1],color=colors[0],label='Fill level')
+        if plot_errors:
+            ax.fill_between(masses,fill_levels[0],fill_levels[2],color=colors[0],lw=0,alpha=0.3)
         ax.set_xlabel('Mass filled [g]')
         ax.set_ylabel('Fill level [cm]')
         ax.set_title('Liquid xenon level in the detector')
         ax.set_xlim([np.amin(masses),np.amax(masses)])
         ax.set_ylim([np.amin(fill_levels),np.amax(fill_levels)])
-
-        colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
+        colors = colors[1:]
 
         for j,component in enumerate(self.geometry):
             if self.geometry[component]['y_position'] < 0:
@@ -165,30 +189,34 @@ class FillLevel:
                 y_upper = self.geometry[component]['y_position']+i*self.geometry[component]['spacing']\
                           + self.geometry[component]['height']
                 mass_range = [self.mass_filled(y_lower),self.mass_filled(y_upper)]
-                plt.fill_between(mass_range,y_lower,y_upper,edgecolor=colors[j],\
-                                 facecolor=to_rgba(colors[j],alpha=0.1),label=component if i == 0 else None)
+                plt.fill_between(mass_range,y_lower,y_upper,edgecolor=colors[j%len(colors)],\
+                                 facecolor=to_rgba(colors[j%len(colors)],alpha=0.1),\
+                                 label=component if i == 0 else None)
                 
-        ax.legend(ncol=3,fontsize=10)
+        ax.legend(ncol=4,fontsize=8)
 
         return fig,ax
 
 
-    def plot_mass_filled(self,fill_levels):
+    def plot_mass_filled(self,fill_levels,plot_errors=False):
         '''
         Plot the mass filled as a function of the fill level in the detector.
         '''
 
-        masses = self.mass_filled(fill_levels)
+        masses = self.mass_filled(fill_levels,return_errors=True)
+
+        colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
         fig,ax = plt.subplots()
-        ax.plot(fill_levels,masses,label='Fill level')
+        ax.plot(fill_levels,masses[1],color=colors[0],label='Fill level')
+        if plot_errors:
+            ax.fill_between(fill_levels,masses[0],masses[2],color=colors[0],lw=0,alpha=0.3)
         ax.set_ylabel('Mass filled [g]')
         ax.set_xlabel('Fill level [cm]')
         ax.set_title('Xenon mass in the detector')
         ax.set_xlim([np.amin(fill_levels),np.amax(fill_levels)])
         ax.set_ylim([np.amin(masses),np.amax(masses)])
-
-        colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
+        colors = colors[1:]
 
         for j,component in enumerate(self.geometry):
             if self.geometry[component]['y_position'] < 0:
@@ -198,10 +226,11 @@ class FillLevel:
                 y_upper = self.geometry[component]['y_position']+i*self.geometry[component]['spacing']\
                           + self.geometry[component]['height']
                 mass_range = [self.mass_filled(y_lower),self.mass_filled(y_upper)]
-                plt.fill_betweenx(mass_range,y_lower,y_upper,edgecolor=colors[j],\
-                                  facecolor=to_rgba(colors[j],alpha=0.1),label=component if i == 0 else None)
+                plt.fill_betweenx(mass_range,y_lower,y_upper,edgecolor=colors[j%len(colors)],\
+                                  facecolor=to_rgba(colors[j%len(colors)],alpha=0.1),\
+                                  label=component if i == 0 else None)
                 
-        ax.legend(ncol=3,fontsize=10)
+        ax.legend(ncol=4,fontsize=8)
 
         return fig,ax
     
@@ -220,16 +249,17 @@ class FillLevel:
             heights.append(comp['y_position']+comp['height']+(comp['number']-1)+comp['spacing'])
 
         y_vals = np.linspace(0,np.amax(heights),1000)
-        areas = np.diff(self.mass_filled(y_vals)/self.lxe_density)/(y_vals[1]-y_vals[0])
+        areas = np.diff(self.mass_filled(y_vals)/self.lxe_density[1])/(y_vals[1]-y_vals[0])
 
-        ax.plot(areas,y_vals[:-1],label='Area')
+        colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
+
+        ax.plot(areas,y_vals[:-1],color=colors[0],label='Area')
         ax.set_xlabel('Cross-sectional area [cm$^2$]')
         ax.set_ylabel('Height [cm]')
         ax.set_title('Detector geometry')
         ax.set_ylim([0,np.amax(y_vals)])
         lims = ax.get_xlim()
-
-        colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
+        colors = colors[1:]
 
         for j,component in enumerate(self.geometry):
             if self.geometry[component]['y_position'] < 0:
@@ -238,9 +268,10 @@ class FillLevel:
                 y_lower = self.geometry[component]['y_position']+i*self.geometry[component]['spacing']
                 y_upper = self.geometry[component]['y_position']+i*self.geometry[component]['spacing']\
                           + self.geometry[component]['height']
-                plt.fill_between(lims,y_lower,y_upper,edgecolor=colors[j],facecolor=to_rgba(colors[j],alpha=0.1),\
+                plt.fill_between(lims,y_lower,y_upper,edgecolor=colors[j%len(colors)],\
+                                 facecolor=to_rgba(colors[j%len(colors)],alpha=0.1),\
                                  label=component if i == 0 else None)
 
-        ax.legend(ncol=3,fontsize=10)
+        ax.legend(ncol=4,fontsize=8)
 
         return fig,ax
