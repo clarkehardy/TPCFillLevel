@@ -1,0 +1,146 @@
+Full TPC:
+  volume: 11526.7
+  height: 20.5537
+  y_position: 0
+  number: 1
+  spacing: 0
+  profile: "rectangular"
+  solid: False
+
+SiPM hole:
+  height: 2.4728
+  volume: 25.124
+  y_position: -2.4728
+  number: 1
+  spacing: 0
+  profile: "rectangular"
+  solid: False
+
+Bottom tubing:
+  volume: 86.46
+  height: 1.00
+  y_position: -1000
+  number: 1
+  spacing: 0
+  profile: "rectangular"
+  solid: False
+
+Support rods:
+  volume: 40.4259
+  height: 15.568
+  y_position: 0
+  number: 3
+  spacing: 0
+  profile: "rectangular"
+  solid: True
+
+Cathode:
+  volume: 35.463
+  height: 0.483
+  y_position: 3.07
+  number: 1
+  spacing: 0
+  profile: "rectangular"
+  solid: True
+
+Field ring:
+  volume: 23.312
+  height: 0.3175
+  y_position: 5.5728
+  number: 5
+  spacing: 2.3368
+  profile: "rectangular"
+  solid: True
+
+Ground plane:
+  volume: 36.532
+  height: 0.1588
+  y_position: 17.2568
+  number: 1
+  spacing: 0
+  profile: "rectangular"
+  solid: True
+
+Mock tile:
+  volume: 8.289
+  height: 0.0635
+  y_position: 17.2568
+  number: 1
+  spacing: 0
+  profile: "rectangular"
+  solid: True
+
+Finger spacers:
+  height: 0.500
+  volume: 0.9324
+  y_position: 17.3203
+  number: 1
+  spacing: 0
+  profile: "rectangular"
+  solid: True
+
+ASIC R&D board:
+  volume: 13.594
+  height: 0.160
+  y_position: 17.8023
+  number: 1
+  spacing: 0
+  profile: "rectangular"
+  solid: True
+
+Cu Spine and isolator:
+  volume: 4.596
+  height: 1.800
+  y_position: 17.9803
+  number: 1
+  spacing: 0
+  profile: "rectangular"
+  solid: True
+
+Back plane:
+  height: 0.4277
+  volume: 135.921
+  y_position: 18.9803
+  number: 1
+  spacing: 0
+  profile: "rectangular"
+  solid: True
+
+#Module spacers:
+#Ignored for now as an unimportant correction
+
+Subd-50 connectors:
+  volume: 10.9
+  height: 1.27
+  y_position: 17.9803
+  number: 2
+  spacing: 11.43
+  profile: "rectangular"
+  solid: True
+
+Small feedthroughs:
+  volume: 58.3139
+  height: 6.1316
+  y_position: 20.5537
+  number: 3
+  spacing: 0
+  profile: "rectangular"
+  solid: False
+
+Large feedthrough:
+  volume: 617.520
+  height: 8.2906
+  y_position: 20.5537
+  number: 1
+  spacing: 0
+  profile: "rectangular"
+  solid: False
+
+Recirc heater tube:
+  volume: 29.82
+  height: 25.54
+  y_position: 0.00
+  number: 1
+  spacing: 0
+  profile: "rectangular"
+  solid: False
