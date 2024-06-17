@@ -80,9 +80,18 @@ Main flanges:
   solid: False
 
 Recirc heater tube:
-  volume: 29.82
-  height: 25.54
+  volume: 38.01
+  height: 35.54
   y_position: 0.00
+  number: 1
+  spacing: 0
+  profile: "rectangular"
+  solid: False
+
+Inlet tube:
+  volume: 8.19
+  height: 10.00
+  y_position: 25.54
   number: 1
   spacing: 0
   profile: "rectangular"
