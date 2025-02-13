@@ -1,5 +1,7 @@
 Bottom tubing:
-  volume: 86.46
+  volume: 47.55 #86.46
+  # 86.46 for Jacopo's recirc heater with mini CF adapter
+  # 47.55 for Marie's recirc heater without the adapter
   height: 1.00
   y_position: -1000
   number: 1
@@ -80,8 +82,8 @@ Main flanges:
   solid: False
 
 Recirc heater tube:
-  volume: 38.01
-  height: 35.54
+  volume: 32.68 # 32.68 for Marie's recirc heater, 38.01 for Jacopo's
+  height: 40.00 # 40.00 for Marie's recirc heater, 35.54 for Jacopo's
   y_position: 0.00
   number: 1
   spacing: 0
