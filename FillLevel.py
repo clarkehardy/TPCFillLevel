@@ -151,6 +151,9 @@ class FillLevel:
 
             if return_num:
                 levels = levels[0]
+                if return_errors:
+                    lower_levels = lower_levels[0]
+                    upper_levels = upper_levels[0]
 
             # return either the median value or the lower, median, and upper values
             if return_errors:
