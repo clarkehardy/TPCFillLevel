@@ -23,7 +23,7 @@ A detector is defined in its own YAML file in [geometries](https://github.com/cl
 - `y_position`: `float`, the vertical coordinate defining the lowest point on the object
 - `number`: `int`, the number of instances for objects that are repeated multiple times
 - `spacing`: `float`, the vertical spacing between the lowest point of one instance and the lowest point of the next (zero if they are all at the same level)
-- `profile`: `string`, which width profile to use for the object. Currently, `rectangular` and `circular` are supported, but other profiles can be added by defining a new functions in [FillLevel.py](https://github.com/clarkehardy/TPCFillLevel/blob/main/FillLevel.py)
+- `profile`: `string`, which width profile to use for the object. Currently, `rectangular` and `circular` are supported, but other profiles can be added by defining new functions in [FillLevel.py](https://github.com/clarkehardy/TPCFillLevel/blob/main/FillLevel.py)
 - `solid`: `bool`, whether the object is solid (`True`) or empty space (`False`)
 
 ## Usage
